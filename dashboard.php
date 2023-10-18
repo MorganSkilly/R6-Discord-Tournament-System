@@ -65,9 +65,7 @@ function returnGuilds()
   </head>
 
   <body class="bg">
-      <div class="alert alert-warning">
-        <strong>Important!</strong> This tournament management system is in active development if you wish to use it for your tournament you should first speak to <a href="https://morgan.games/">@MorganSkilly</a>.
-      </div>
+  
       
       <?php include('navigation.php'); ?>
 

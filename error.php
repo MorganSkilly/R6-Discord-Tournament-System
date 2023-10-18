@@ -18,14 +18,9 @@
   </head>
 
   <body class="bg">
-      <div class="alert alert-warning">
-        <strong>Important!</strong> This tournament management system is in active development if you wish to use it for your tournament you should first speak to <a href="https://morgan.games/">@MorganSkilly</a>.
-      </div>
-      
-      <?php 
-        session_start();
-        include('navigation.php'); 
-      ?>
+
+          
+      <?php include('navigation.php'); ?>
 
       <div class="container">
         <div class="mt-4"> 

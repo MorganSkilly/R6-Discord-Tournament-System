@@ -1,7 +1,7 @@
 <?php
 session_start();
 require __DIR__ . '/session-variables.php';
-setDiscordOauthKeys();
+setKeys();
 
 // Define your Discord OAuth2 application credentials
 $clientId = $_SESSION['oauth_id'];
@@ -63,13 +63,9 @@ if (isset($tokenData['access_token'])) {
 
     if (isset($_SESSION['discord_user_data'])) {
         // User data obtained successfully
-
-        echo '<pre>';
-        var_dump($_SESSION);
-        echo '</pre>';
         
         $_SESSION['logged_in'] = true;
-        header("Location: dashboard.php");
+        header("Location: process-login.php");
     } else {
         echo "Failed to fetch user data from Discord.";
     }
