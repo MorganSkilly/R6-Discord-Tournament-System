@@ -69,22 +69,19 @@ if(!$_SESSION['logged_in']){
                   die('Connection failed: ' . $conn->connect_error);
                 }
 
-                $sql = "SELECT ubisoft_name, twitter_name, twitch_name FROM users WHERE discord_id = ?";
+                $sql = "SELECT ubisoft_name, twitter_name, twitch_name, r6_player_stats, r6_player_rating FROM users WHERE discord_id = ?";
 
                 $stmt = $conn->prepare($sql);
                 $stmt->bind_param("i", $user_id);
                 $stmt->execute();
 
-                $stmt->bind_result($ubisoft_name, $twitter_name, $twitch_name);
+                $stmt->bind_result($ubisoft_name, $twitter_name, $twitch_name, $r6_stats, $r6_rating);
 
                 if ($stmt->fetch())
                 {
                   $ubisoft_name = "https://r6.tracker.network/profile/pc/" . $ubisoft_name;
                   $twitter_name = "https://twitter.com/" . $twitter_name;
-                  $twitch_name = "https://www.twitch.tv/" . $twitch_name;
-
-
-                  
+                  $twitch_name = "https://www.twitch.tv/" . $twitch_name;                  
 
                   if (isset($_GET['edit'])){
                     echo "<img class='img-fluid rounded-circle' src='$avatar_url' width='50vw' height='50vw'>
@@ -115,38 +112,31 @@ if(!$_SESSION['logged_in']){
 
                     echo "<img class='img-fluid rounded-circle' src='$avatar_url' width='150vw' height='150vw'>";
 
+                    echo "<br><br><h4><i class='fa-solid fa-star'></i> " . round($r6_rating) . "</h4>";
                     echo "<h2>" . $user_data['username'] . "</h2><br>";
 
                     if ($ubisoft_name != "")
                     {
-                      require 'simple_html_dom.php';
+                      echo '<table class="table table-dark text-left">';
+                      echo '<thead><tr><th scope="col">Stat</th><th scope="col">Value</th></tr></thead><tbody>';
 
-                      if($html = @file_get_contents($ubisoft_name))
+                      foreach (json_decode($r6_stats, true) as $key => $value)
                       {
-                        $dom = new simple_html_dom();
-                        $dom->load($html);
-  
-                        $rank1 = $dom->find('div.r6-quickseason__image', 3);
-                        $rank2 = $dom->find('div.r6-quickseason__image', 2);
-                        $rank3 = $dom->find('div.r6-quickseason__image', 1);
-                        $seasonkd = $dom->find('div.trn-defstat__value', 8);
-                        $lifekd = $dom->find('div.trn-defstat__value', 10);
-                        $matches = $dom->find('div.trn-card__header-subline', 0);
-  
-                        if ($rank1) {
-                            echo $rank1 . $rank2 . $rank3 . "<br>" . $seasonkd . " seasonal kd<br>" . $lifekd . " lifetime kd " . $matches;
+                        if (round($value, 2) == (int) $value)
+                        {
+                          $rounded_value = (int) $value;
                         }
-                        
-                        
-                        $dom->clear();
-                        unset($dom);
-                      }
-                      else
-                      {
-                        echo "This Ubisoft account could not be found on R6 Tracker!";
-                      }
+                        else
+                        {
+                          $rounded_value = number_format($value, 2);
+                        }
 
-                      
+                        echo '<tr>';
+                        echo '<td>' . $key . '</td>';
+                        echo '<td>' . $rounded_value . '</td>';
+                        echo '</tr>';
+                      }
+                      echo '</tbody></table>';
 
                       echo "<hr>";
 

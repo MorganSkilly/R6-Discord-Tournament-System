@@ -1,5 +1,8 @@
 <?php
 session_start();
+$_SESSION['internal_api_call'] = true;
+
+require "api.php";
 
 $host = $_SESSION['sql_host'];
 $username = $_SESSION['sql_username'];
@@ -37,10 +40,20 @@ if ($user_exists)
 
     if(isset($_POST['twitch']) && !empty($_POST['twitch']))
     {
+        $twitch_acc = $_POST['twitch'];
+        $lastSlashPosition = strrpos($twitch_acc, "/");
+        
+        if ($lastSlashPosition !== false) {
+            $parsed_twitch_acc = substr($twitch_acc, $lastSlashPosition + 1);
+        }
+        else{
+            $parsed_twitch_acc = $twitch_acc;
+        }
+
         $sql1 = "UPDATE users SET twitch_name = ? WHERE discord_id = ?";
 
         $stmtupdate1 = $conn->prepare($sql1);
-        $stmtupdate1->bind_param("si", $_POST['twitch'], $discord_id);
+        $stmtupdate1->bind_param("si", $parsed_twitch_acc, $discord_id);
 
         if ($stmtupdate1->execute()) {
             echo "Profile updated successfully.";
@@ -50,10 +63,20 @@ if ($user_exists)
     }
     if(isset($_POST['twitter']) && !empty($_POST['twitter']))
     {
+        $twitter_acc = $_POST['twitter'];
+        $lastSlashPosition = strrpos($twitter_acc, "/");
+        
+        if ($lastSlashPosition !== false) {
+            $parsed_twitter_acc = substr($twitter_acc, $lastSlashPosition + 1);
+        }
+        else{
+            $parsed_twitter_acc = $twitter_acc;
+        }
+
         $sql2 = "UPDATE users SET twitter_name = ? WHERE discord_id = ?";
 
         $stmtupdate2 = $conn->prepare($sql2);
-        $stmtupdate2->bind_param("si", $_POST['twitter'], $discord_id);
+        $stmtupdate2->bind_param("si", $parsed_twitter_acc, $discord_id);
 
         if ($stmtupdate2->execute()) {
             echo "Profile updated successfully.";
@@ -63,10 +86,14 @@ if ($user_exists)
     }
     if(isset($_POST['ubisoft']) && !empty($_POST['ubisoft']))
     {
-        $sql3 = "UPDATE users SET ubisoft_name = ? WHERE discord_id = ?";
+        $sql3 = "UPDATE users SET ubisoft_name = ?, r6_player_stats = ?, r6_player_rating = ? WHERE discord_id = ?";
 
         $stmtupdate3 = $conn->prepare($sql3);
-        $stmtupdate3->bind_param("si", $_POST['ubisoft'], $discord_id);
+
+        $r6_stats = get_player_stats($_SESSION['r6_stats_endpoint'] . $_POST['ubisoft']);
+        $r6_rating = get_player_rating($r6_stats);
+        
+        $stmtupdate3->bind_param("ssdi", $_POST['ubisoft'], json_encode($r6_stats), $r6_rating, $discord_id);
 
         if ($stmtupdate3->execute()) {
             echo "Profile updated successfully.";

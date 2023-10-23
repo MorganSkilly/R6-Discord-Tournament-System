@@ -75,7 +75,7 @@ $conn->close();
                     die('Connection failed: ' . $mysqli->connect_error);
                 }
 
-                $columns = array('id', 'name', 'discord_id', 'account_created', 'last_login'); // Replace with the actual column names you want
+                $columns = array('id', 'name', 'ubisoft_name', 'r6_player_rating', 'discord_id', 'account_created', 'last_login'); // Replace with the actual column names you want
 
                 // Construct the SQL query to select specific columns from the table
                 $sql = 'SELECT ' . implode(', ', $columns) . ' FROM ' . $table;

@@ -25,6 +25,7 @@ h6{
   background-size: 100vw 100vw;
   background-repeat: no-repeat;
   background-position: top center;
+  background-attachment: fixed;
 }
 
 .btn-primary, .btn-primary:hover, .btn-primary:active, .btn-primary:visited {
