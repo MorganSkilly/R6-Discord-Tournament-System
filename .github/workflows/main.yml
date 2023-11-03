@@ -26,4 +26,5 @@ jobs:
           LOCAL_DIR="./"
           REMOTE_DIR="/home/github-deploy-action-ssh/htdocs/test"
 
+          lftp -e "set ftp:passive-mode true; open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER; mirror -R -e -x .git/ $LOCAL_DIR $REMOTE_DIR; quit"
           lftp -e "open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER; mirror -R -e -x .git/ $LOCAL_DIR $REMOTE_DIR; quit"
