@@ -11,6 +11,6 @@ jobs:
     - name: FTP-Deploy-Action
       uses: SamKirkland/FTP-Deploy-Action@4.0.0
       with:
-        ftp-server: 82.165.7.179
+        ftp-server: tournaments.morgan.games
         ftp-username: github-deploy-action-ssh
         ftp-password: u6jPzZDNyyN0CS1BaM1A
