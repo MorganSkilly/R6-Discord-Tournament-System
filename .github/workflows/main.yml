@@ -16,7 +16,7 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local_dir: "./public_html"
           remote_dir: "/www/sub-domain/games/myself"
-          delete: "true"
+          delete: "false"
           max_retries: "7"
           no_symlinks: "false"
           ftp_ssl_allow: "true"
