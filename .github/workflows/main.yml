@@ -1,16 +1,29 @@
-on: push
-name: Publish Website
+name: FTP Deploy
+
+on:
+  push:
+    branches:
+      - main  # Change this to your main branch
+
 jobs:
-  FTP-Deploy-Action:
-    name: FTP-Deploy-Action
+  deploy:
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v2.1.0
-      with:
-        fetch-depth: 2
-    - name: FTP-Deploy-Action
-      uses: SamKirkland/FTP-Deploy-Action@4.0.0
-      with:
-        ftp-server: tournaments.morgan.games
-        ftp-username: github-deploy-action-ssh
-        ftp-password: u6jPzZDNyyN0CS1BaM1A
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up lftp
+        run: |
+          sudo apt-get install lftp
+        continue-on-error: true  # Allow for failure if lftp is already installed
+
+      - name: Deploy code to FTP
+        run: |
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          LOCAL_DIR="./"
+          REMOTE_DIR="/home/github-deploy-action-ssh/htdocs/test"
+
+          lftp -e "open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER; mirror -R -e -x .git/ $LOCAL_DIR $REMOTE_DIR; quit"
